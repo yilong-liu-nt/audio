@@ -1,28 +1,27 @@
-from tkinter import *
-import wave
-from functools import partial
-from tkinter import filedialog
-import pyaudio
-import pygame
+import tkinter as tk
 import threading
+import pyaudio
+import wave
 import time
+
+
 class SamplePlayer:
-    def __init__(self, master, filename):
-        frame = Frame(master=master)
+    def __init__(self, master):
+        frame = tk.Frame(master=master)
         frame.pack(expand=True, fill="both")
 
-        self.current_lbl = Label(master=frame, text="0/0")
+        self.current_lbl = tk.Label(master=frame, text="0/0")
         self.current_lbl.pack()
 
-        self.pause_btn = Button(master=frame, text="Pause", command=self.pause)
+        self.pause_btn = tk.Button(master=frame, text="Pause", command=self.pause)
         self.pause_btn.pack()
 
-        self.play_btn = Button(master=frame, text="Play", command=self.play)
+        self.play_btn = tk.Button(master=frame, text="Play", command=self.play)
         self.play_btn.pack()
 
         # If you aren't going to use `\`s there is no need for the
         # "r" before the start of the string
-        self.file = filename
+        self.file = r"sample_wavfile.wav"
 
         self.paused = True
         self.playing = False
@@ -31,6 +30,14 @@ class SamplePlayer:
         self.current_sec = 0
 
     def start_playing(self):
+        """ # I don't have `pyaudio` so I used this to test my answer:
+        self.audio_length = 200
+        while self.playing:
+            if not self.paused:
+                self.current_sec += 1
+                time.sleep(1)
+        return None
+        # """
 
         p = pyaudio.PyAudio()
         chunk = 1024
@@ -85,42 +92,9 @@ def handle_close():
     player.stop()
     root.destroy()
 
+## SETUP AND RUN
+root = tk.Tk()
+player = SamplePlayer(root)
 
-
-
-master = Tk()
-master.geometry("1000x600")
-
-
-def import_sound(master):
-    global audio
-    file_types = [('Wav Files', '*.Wav'), ('Mp3 Files', '*.Mp3')]
-    filename_1 = filedialog.askopenfilename(filetypes=file_types)
-    audio = filename_1
-    print(f"file uploaded:{audio}")
-
-def play_sound(master):
-    global audio
-    play_window = Toplevel(master)
-    player = SamplePlayer(play_window, audio)
-    """
-    pygame.mixer.init()
-    sound = pygame.mixer.Sound(audio)
-    sound.play()
-    pygame.time.wait(int(sound.getlength() * 0.1))
-    """
-
-
-import_sound_btn = Button(master,
-    text= "import ",
-    height= 5, width = 20,
-    command=partial(import_sound, master)
-).grid(row=1, column=0)
-
-play = Button(master,
-    text="Play",
-    height= 5, width= 20,
-    command= partial(play_sound, master),
-).grid(row=2, column=0)
-
-master.mainloop()
+root.protocol("WM_DELETE_WINDOW", handle_close)
+root.mainloop()
