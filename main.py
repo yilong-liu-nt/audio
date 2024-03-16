@@ -77,7 +77,6 @@ class SamplePlayer:
 
     def update_lbl(self):
         if self.playing and (not self.paused):
-            self.current_lbl.config(text=f"{self.current_sec}/{self.audio_length}")
             self.current_lbl.config(text=f"{round(self.current_sec,2)}/{round(self.audio_length,2)}")
             # There is no need to update the label more than 10 times a second.
             # It changes once per second anyways.
