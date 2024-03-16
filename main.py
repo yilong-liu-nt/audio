@@ -1,4 +1,4 @@
-from tkinter import *
+from tkinter import * #Frame, Label, Button, Toplevel
 import wave
 from functools import partial
 from tkinter import filedialog
@@ -6,6 +6,8 @@ import pyaudio
 import pygame
 import threading
 import time
+
+
 class SamplePlayer:
     def __init__(self, master, filename):
         frame = Frame(master=master)
@@ -55,12 +57,12 @@ class SamplePlayer:
                     self.current_sec = chunk_total/wf.getframerate()
 
         self.playing = False
-        stream.close()   
+        stream.close()
         p.terminate()
 
     def pause(self):
         self.paused = True
-    
+
     def play(self):
         if not self.playing:
             self.playing = True
@@ -76,6 +78,7 @@ class SamplePlayer:
     def update_lbl(self):
         if self.playing and (not self.paused):
             self.current_lbl.config(text=f"{self.current_sec}/{self.audio_length}")
+            self.current_lbl.config(text=f"{round(self.current_sec,2)}/{round(self.audio_length,2)}")
             # There is no need to update the label more than 10 times a second.
             # It changes once per second anyways.
             self.current_lbl.after(100, self.update_lbl)
@@ -84,8 +87,6 @@ class SamplePlayer:
 def handle_close():
     player.stop()
     root.destroy()
-
-
 
 
 master = Tk()
@@ -99,9 +100,11 @@ def import_sound(master):
     audio = filename_1
     print(f"file uploaded:{audio}")
 
+
 def play_sound(master):
     global audio
     play_window = Toplevel(master)
+    play_window.geometry("500x500")
     player = SamplePlayer(play_window, audio)
     """
     pygame.mixer.init()
@@ -112,15 +115,15 @@ def play_sound(master):
 
 
 import_sound_btn = Button(master,
-    text= "import ",
-    height= 5, width = 20,
-    command=partial(import_sound, master)
-).grid(row=1, column=0)
+                          text="import ",
+                          height=5, width=20,
+                          command=partial(import_sound, master)
+                          ).grid(row=1, column=0)
 
 play = Button(master,
-    text="Play",
-    height= 5, width= 20,
-    command= partial(play_sound, master),
-).grid(row=2, column=0)
+              text="Play",
+              height=5, width=20,
+              command=partial(play_sound, master),
+              ).grid(row=2, column=0)
 
 master.mainloop()
