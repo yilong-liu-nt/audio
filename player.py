@@ -1,27 +1,26 @@
-import tkinter as tk
+from tkinter import *
 import threading
 import pyaudio
 import wave
 import time
 
-
 class SamplePlayer:
-    def __init__(self, master):
-        frame = tk.Frame(master=master)
+    def __init__(self, master, filename):
+        frame = Frame(master=master)
         frame.pack(expand=True, fill="both")
 
-        self.current_lbl = tk.Label(master=frame, text="0/0")
+        self.current_lbl = Label(master=frame, text="0/0")
         self.current_lbl.pack()
 
-        self.pause_btn = tk.Button(master=frame, text="Pause", command=self.pause)
+        self.pause_btn = Button(master=frame, text="Pause", command=self.pause)
         self.pause_btn.pack()
 
-        self.play_btn = tk.Button(master=frame, text="Play", command=self.play)
+        self.play_btn = Button(master=frame, text="Play", command=self.play)
         self.play_btn.pack()
 
         # If you aren't going to use `\`s there is no need for the
         # "r" before the start of the string
-        self.file = r"sample_wavfile.wav"
+        self.file = filename
 
         self.paused = True
         self.playing = False
@@ -30,14 +29,6 @@ class SamplePlayer:
         self.current_sec = 0
 
     def start_playing(self):
-        """ # I don't have `pyaudio` so I used this to test my answer:
-        self.audio_length = 200
-        while self.playing:
-            if not self.paused:
-                self.current_sec += 1
-                time.sleep(1)
-        return None
-        # """
 
         p = pyaudio.PyAudio()
         chunk = 1024
@@ -62,12 +53,12 @@ class SamplePlayer:
                     self.current_sec = chunk_total/wf.getframerate()
 
         self.playing = False
-        stream.close()   
+        stream.close()
         p.terminate()
 
     def pause(self):
         self.paused = True
-    
+
     def play(self):
         if not self.playing:
             self.playing = True
@@ -82,7 +73,7 @@ class SamplePlayer:
 
     def update_lbl(self):
         if self.playing and (not self.paused):
-            self.current_lbl.config(text=f"{self.current_sec}/{self.audio_length}")
+            self.current_lbl.config(text=f"{round(self.current_sec,2)}/{round(self.audio_length,2)}")
             # There is no need to update the label more than 10 times a second.
             # It changes once per second anyways.
             self.current_lbl.after(100, self.update_lbl)
@@ -91,10 +82,3 @@ class SamplePlayer:
 def handle_close():
     player.stop()
     root.destroy()
-
-## SETUP AND RUN
-root = tk.Tk()
-player = SamplePlayer(root)
-
-root.protocol("WM_DELETE_WINDOW", handle_close)
-root.mainloop()
