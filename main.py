@@ -17,8 +17,10 @@ global audio
 global ampl_value
 
 master = Tk()
-ampl_value = StringVar()
-sped = StringVar()
+ampl_value = StringVar(name="amplication value", value="10")
+sped = StringVar(name="speed", value="2")
+duration_seconds = StringVar(name="Dursation", value="3")
+
 master.geometry("1000x600")
 def enhance_volume(master):
     global audio
@@ -57,9 +59,23 @@ def play_sound(master):
     player = SamplePlayer(play_window, audio, rate_ratio = play_speed)
 
 
-ampl_entry = Entry(master, textvariable=ampl_value).grid(row=1, column=2)
+def record(master):
+    try:
+        duration = float(duration_seconds.get())
+    except:
+        duration = 3
+
+    recording_window(master, duration)
+
+Label(master, text="Volumne Increase/Decrease").grid(row=4, column=2)
+ampl_entry = Entry(master, textvariable=ampl_value).grid(row=4, column=3)
+
+Label(master, text="Speed Ratio").grid(row=2, column=2)
 speed_factor = Entry(master, textvariable=sped).grid(row=2, column=3)
 
+
+Label(master, text="Duration").grid(row=5, column=2)
+duration_entry = Entry(master, textvariable=duration_seconds).grid(row=5, column=3)
 
 
 import_sound_btn = Button(master,
@@ -78,12 +94,12 @@ make_louder = Button(master,
                      text="Make Louder",
                      height=5, width=20,
                      command=partial(enhance_volume, master),
-).grid(row=3, column=2)
+).grid(row=4, column=0)
 
 record = Button(master,
                 text="Record",
                 height=5, width=20,
-                command=partial(recording_window, master),
-).grid(row=3, column=3)
+                command=partial(record, master),
+).grid(row=5, column=0)
 
 master.mainloop()
