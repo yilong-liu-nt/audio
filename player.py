@@ -5,7 +5,7 @@ import wave
 import time
 
 class SamplePlayer:
-    def __init__(self, master, filename):
+    def __init__(self, master, filename, rate_ratio = 1):
         frame = Frame(master=master)
         frame.pack(expand=True, fill="both")
 
@@ -27,6 +27,7 @@ class SamplePlayer:
 
         self.audio_length = 0
         self.current_sec = 0
+        self.rate_ratio = rate_ratio
 
     def start_playing(self):
 
@@ -37,7 +38,7 @@ class SamplePlayer:
 
             stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
                             channels=wf.getnchannels(),
-                            rate=wf.getframerate(),
+                            rate=int(wf.getframerate() * self.rate_ratio),
                             output=True)
 
             data = wf.readframes(chunk)

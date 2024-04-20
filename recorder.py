@@ -7,14 +7,16 @@ import sounddevice as sd
 from scipy.io.wavfile import write
 import wavio as wv
 from functools import partial
+import numpy as np
 
-duration = 5
-freq = 44100
 def start_recording_sound_device():
+    duration = 5
+    freq = 44100
+
     recording = sd.rec(int(duration * freq), 
-                samplerate=freq, channels=2)
+                samplerate=freq, channels=2, dtype=np.int16)
     sd.wait()
-    write('output.mp3', freq, recording)
+    write('output.wav', freq, recording)
 
 
 
@@ -24,9 +26,9 @@ def start_recording():
     channels = 2
     fs = 44100
     seconds = 3
-    filename = output.wav
+    filename = "output.wav"
 
-    p = pyaudio.PyAudio
+    p = pyaudio.PyAudio()
     
     print('Recording')
 
@@ -49,10 +51,11 @@ def start_recording():
     wf.setframerate(fs)
     wf.writeframs(b''.join(frames))
     wf.close()
+    
 def recording_window(master):
     recording_window = Toplevel(master)
     recording_window.geometry("500x500")
 
     start_recording_butt = Button(recording_window,
                          text="Record",
-                         command=partial(start_recording)).grid(row=0, column=0) 
+                         command=partial(start_recording_sound_device)).grid(row=0, column=0) 

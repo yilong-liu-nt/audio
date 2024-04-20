@@ -18,6 +18,7 @@ global ampl_value
 
 master = Tk()
 ampl_value = StringVar()
+sped = StringVar()
 master.geometry("1000x600")
 def enhance_volume(master):
     global audio
@@ -35,7 +36,7 @@ def enhance_volume(master):
 
 def import_sound(master):
     global audio
-    file_types = [('Wav Files', '*.Wav'), ('Mp3 Files', '*.Mp3')]
+    file_types = [('Wav Files', '*.wav'), ('Mp3 Files', '*.mp3')]
     filename_1 = filedialog.askopenfilename(filetypes=file_types)
     audio = filename_1
     print(f"file uploaded:{audio}")
@@ -45,13 +46,24 @@ def play_sound(master):
     global audio
     play_window = Toplevel(master)
     play_window.geometry("500x500")
-    player = SamplePlayer(play_window, audio)
+
+    try:
+        play_speed = float(sped.get())
+    except:
+        play_speed = 1.0
+
+    print("Play speed", play_speed)
+
+    player = SamplePlayer(play_window, audio, rate_ratio = play_speed)
 
 
 ampl_entry = Entry(master, textvariable=ampl_value).grid(row=1, column=2)
+speed_factor = Entry(master, textvariable=sped).grid(row=2, column=3)
+
+
 
 import_sound_btn = Button(master,
-                          text="import ",
+                          text="import",
                           height=5, width=20,
                           command=partial(import_sound, master)
                           ).grid(row=1, column=0)
